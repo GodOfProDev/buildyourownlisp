@@ -3,6 +3,8 @@ project(buildyourownlisp C)
 
 set(CMAKE_C_STANDARD 23)
 
-add_executable(buildyourownlisp parser.c
-        mpc.h
-        mpc.c)
+add_executable(lisp_clone main.c mpc.h mpc.c
+        parser.c
+        parser.h
+        eval.h
+        eval.c)
