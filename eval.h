@@ -9,7 +9,7 @@ typedef enum {
     LVAL_SEXPR
 } LValType;
 
-typedef struct {
+typedef struct lval {
     LValType type;
     long num;
 
@@ -20,7 +20,7 @@ typedef struct {
     struct lval **cell;
 } lval;
 
-lval *lval_num(const long x);
+lval *lval_num(long x);
 
 lval *lval_err(char *m);
 
@@ -30,11 +30,19 @@ lval *lval_sexpr();
 
 void lval_del(lval *v);
 
-void lval_print(const lval x);
+lval *lval_add(lval *v, lval *x);
 
-void lval_println(const lval x);
+lval *lval_read_num(mpc_ast_t *t);
 
-lval eval_op(const lval x, const char *op, const lval y);
+lval *lval_read(mpc_ast_t *t);
+
+void lval_expr_print(lval *v, char open, char close);
+
+void lval_print(lval *v);
+
+void lval_println(lval *v);
+
+lval *eval_op(const lval x, const char *op, const lval y);
 
 lval eval(const mpc_ast_t *ast);
 

@@ -52,8 +52,12 @@ int main(void)
         const parser_result r = parser_parse(input);
         if (!r.hasErrored)
         {
-            lval val = eval(r.ast);
-            lval_println(val);
+            //lval val = eval(r.ast);
+            //lval_println(val);
+
+            lval *x = lval_read(r.ast);
+            lval_println(x);
+            lval_del(x);
 
             mpc_ast_delete(r.ast);
         }
