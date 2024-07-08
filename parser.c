@@ -2,7 +2,8 @@
 
 
 static mpc_parser_t *number;
-static mpc_parser_t *operator;
+static mpc_parser_t *symbol;
+static mpc_parser_t *sexpr;
 static mpc_parser_t *expr;
 static mpc_parser_t *lispy;
 
@@ -12,16 +13,18 @@ void parser_init(bool *is_running_p) {
     isRunning = is_running_p;
 
     number = mpc_new("number");
-    operator = mpc_new("operator");
+    symbol = mpc_new("symbol");
+    sexpr = mpc_new("sexpr");
     expr = mpc_new("expr");
     lispy = mpc_new("lispy");
 
     mpca_lang(MPCA_LANG_DEFAULT,
-              "number   : /-?[0-9]+/;"
-              "operator : \"min\" | \"max\" | '+' | '-' | '*' | '/' | '%' | '^';"
-              "expr     : <number> | '(' <operator> <expr>+ ')';"
-              "lispy    : /^/ <operator> <expr>+ /$/;",
-              number, operator, expr, lispy
+              "number   : /-?[0-9]+/ ;"
+              "symbol   : \"min\" | \"max\" | '+' | '-' | '*' | '/' | '%' | '^' ;"
+              "sexpr    : '(' <expr>* ')' ;"
+              "expr     : <number> | <symbol> | <sexpr> ;"
+              "lispy    : /^/ <expr>* /$/ ;",
+              number, symbol, sexpr, expr, lispy
     );
 }
 
@@ -44,6 +47,6 @@ parser_result parser_parse(char *input) {
 }
 
 void parser_cleanup(int unused) {
-    mpc_cleanup(4, number, operator, expr, lispy);
+    mpc_cleanup(5, number, symbol, sexpr, expr, lispy);
     *isRunning = false;
 }

@@ -5,21 +5,21 @@
 typedef enum
 {
     LVAL_NUM,
-    LVAL_ERR
+    LVAL_ERR,
+    LVAL_SYM,
+    LVAL_SEXPR
 } LValType;
-
-typedef enum
-{
-    LERR_DIV_ZERO,
-    LERR_BAD_OP,
-    LERR_BAD_NUM
-} LValErr;
 
 typedef struct
 {
-    long num;
     LValType type;
-    LValErr err;
+    long num;
+
+    char *err;
+    char *sym;
+
+    int count;
+    struct lval** cell;
 } lval;
 
 lval lval_num(const long x);
