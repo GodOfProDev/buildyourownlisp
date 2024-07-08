@@ -1,24 +1,62 @@
 #include "eval.h"
 #include <string.h>
 
-lval lval_num(const long x)
+lval *lval_num(const long x)
 {
-    lval r;
-    r.num = x;
-    r.type = LVAL_NUM;
+    lval *v = malloc(sizeof(lval));
+    v->type = LVAL_NUM;
+    v->num = x;
 
-    return r;
+    return v;
 }
 
-lval lval_err(const LValErr x)
+lval *lval_err(char *m)
 {
-    lval r;
-    r.err = x;
-    r.type = LVAL_ERR;
+    lval *v = malloc(sizeof(lval));
+    v->type = LVAL_ERR;
+    v->err = malloc(strlen(m) + 1);
+    strcpy(v->err, m);
 
-    return r;
+    return v;
 }
 
+lval *lval_sym(char *s) {
+    lval *v = malloc(sizeof(lval));
+    v->type = LVAL_SYM;
+    v->sym = malloc(strlen(s) + 1);
+    strcpy(v->sym, s);
+
+    return v;
+}
+
+lval *lval_sexpr() {
+    lval *v = malloc(sizeof(lval));
+    v->type = LVAL_SEXPR;
+    v->count = 0;
+    v->cell = NULL;
+
+    return v;
+}
+
+void lval_del(lval *v) {
+    switch (v->type) {
+        case LVAL_NUM: break;
+
+        case LVAL_ERR: free(v->err);
+        case LVAL_SYM: free(v->sym);
+
+        case LVAL_SEXPR:
+            for (int i = 0; i < v->count; i++) {
+                lval_del(v->cell[i]);
+            }
+            // Free the the memory allocated to contain the pointers
+            free(v->cell);
+            break;
+    }
+
+    // Free the memory allocated for the "lval" struct itself
+    free(v);
+}
 
 void lval_print(const lval x)
 {
